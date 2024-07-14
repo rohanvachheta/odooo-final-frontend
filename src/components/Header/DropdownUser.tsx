@@ -31,7 +31,7 @@ const DropdownUser = ({ userDetails }: any) => {
         </span>
 
         <span className="h-12 w-12 rounded-full flex justify-center text-center items-center font-bold bg-slate-50	">
-          {/* <div>{getInitials(userDetails?.name)}</div> */}
+          <div>{getInitials(userDetails?.name)}</div>
         </span>
 
         <svg

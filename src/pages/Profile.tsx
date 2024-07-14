@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 import { API_URL } from '../constants';
 
 const Profile = ({ userDetails ,setUserDetails}: any) => {
+ 
+  const cookie = Cookies.get('token');
   const [name, setName] = useState(userDetails.name);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    setName(userDetails.name)
+  }, [userDetails])
+  
 
   const handleSave = async (e: any) => {
     e.preventDefault();
@@ -16,7 +24,7 @@ const Profile = ({ userDetails ,setUserDetails}: any) => {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjkzNGYxN2VhMDBkYjUxNjBjNzM1NjYiLCJyb2xlIjoiVXNlciIsImlhdCI6MTcyMDkzMDA5MSwiZXhwIjoxNzIxNTM0ODkxfQ.cpKjHkwuf01GPhEKWS4wQ6O_Wuy_VQKY9eSAmCtN7Q0', // Assuming token is available in userDetails
+          'Authorization': `Bearer ${cookie}`,
         },
         body: JSON.stringify({ name }),
       });
