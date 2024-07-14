@@ -1,26 +1,91 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ClickOutside from '../ClickOutside';
+import { API_URL } from '../../constants';
+import Cookies from 'js-cookie';
+
+function isDateBeforeToday(date) {
+  return new Date(date.toDateString()).getTime()  < new Date(new Date().toDateString()).getTime();
+}
+
+function formatDateTime(dateTimeString) {
+  const date = new Date(dateTimeString);
+  const options = {
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false, timeZone: 'UTC'
+  };
+  return date.toLocaleDateString('en-US', options);
+}
 
 const DropdownNotification = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [notifying, setNotifying] = useState(true);
+  const [notifying, setNotifying] = useState(false);
+  const [booksList, setBooksList] = useState([])
+  const cookie = Cookies.get('token');
+
+  useEffect(() => {
+    // TODO check
+    const fetchBooks = async () => {
+      try {
+        const response = await fetch(`${API_URL}/orders`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${cookie}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user details');
+        }
+
+        const data = await response.json();
+
+        // Get the current date
+        let currentDate = new Date();
+        let updatedData = data
+
+        // Iterate through each transaction
+        updatedData.forEach(transaction => {
+          // Convert dueDate string to a Date object
+          let dueDate = new Date(transaction.dueDate);
+
+          // Compare dueDate with currentDate
+          transaction.isActive=isDateBeforeToday(dueDate)
+        });
+
+        setBooksList(updatedData)
+  const findActiveBooks = updatedData.some(book=>book.isActive && book.status !=="completed")
+
+
+  setNotifying(findActiveBooks)
+
+      } catch (err) {
+      } finally {
+        // setLoading(false);
+      }
+    };
+    fetchBooks()
+
+  }, [dropdownOpen])
+
+
+
 
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
       <li>
         <Link
           onClick={() => {
-            setNotifying(false);
             setDropdownOpen(!dropdownOpen);
           }}
           to="#"
           className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-gray hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white"
         >
           <span
-            className={`absolute -top-0.5 right-0 z-1 h-2 w-2 rounded-full bg-meta-1 ${
-              notifying === false ? 'hidden' : 'inline'
-            }`}
+            className={`absolute -top-0.5 right-0 z-1 h-2 w-2 rounded-full bg-meta-1 ${notifying === false ? 'hidden' : 'inline'
+              }`}
           >
             <span className="absolute -z-1 inline-flex h-full w-full animate-ping rounded-full bg-meta-1 opacity-75"></span>
           </span>
@@ -51,69 +116,27 @@ const DropdownNotification = () => {
             </div>
 
             <ul className="flex h-auto flex-col overflow-y-auto">
-              <li>
+
+              {booksList.map(item=>{
+
+                return  <li>
                 <Link
-                  className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
+                  className={`flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4 ${item.isActive ?'bg-red-50 hover:bg-red-50 dark:bg-blue-950':''}`}
                   to="#"
                 >
                   <p className="text-sm">
                     <span className="text-black dark:text-white">
-                      Edit your information in a swipe
+                     {item.bookId.name}
                     </span>{' '}
-                    Sint occaecat cupidatat non proident, sunt in culpa qui
-                    officia deserunt mollit anim.
+                   {item.description}
                   </p>
 
-                  <p className="text-xs">12 May, 2025</p>
+                  <p className="text-xs">{formatDateTime(item.dueDate)}</p>
                 </Link>
               </li>
-              <li>
-                <Link
-                  className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-                  to="#"
-                >
-                  <p className="text-sm">
-                    <span className="text-black dark:text-white">
-                      It is a long established fact
-                    </span>{' '}
-                    that a reader will be distracted by the readable.
-                  </p>
-
-                  <p className="text-xs">24 Feb, 2025</p>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-                  to="#"
-                >
-                  <p className="text-sm">
-                    <span className="text-black dark:text-white">
-                      There are many variations
-                    </span>{' '}
-                    of passages of Lorem Ipsum available, but the majority have
-                    suffered
-                  </p>
-
-                  <p className="text-xs">04 Jan, 2025</p>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-                  to="#"
-                >
-                  <p className="text-sm">
-                    <span className="text-black dark:text-white">
-                      There are many variations
-                    </span>{' '}
-                    of passages of Lorem Ipsum available, but the majority have
-                    suffered
-                  </p>
-
-                  <p className="text-xs">01 Dec, 2024</p>
-                </Link>
-              </li>
+              })}
+             
+              
             </ul>
           </div>
         )}
