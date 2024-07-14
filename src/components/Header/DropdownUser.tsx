@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import ClickOutside from '../ClickOutside';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import ClickOutside from "../ClickOutside";
 
-
-function getInitials(name:string) {
-  let names = name.trim().split(' ');
+function getInitials(name: string) {
+  let names = name?.trim().split(" ");
   let firstName = names[0];
-  let lastName = names.length > 1 ? names[1] : '';
+  let lastName = names?.length > 1 ? names[1] : "";
 
   let firstInitial = firstName.charAt(0).toUpperCase();
   let lastInitial = lastName.charAt(0).toUpperCase();
@@ -14,9 +13,7 @@ function getInitials(name:string) {
   return lastName ? firstInitial + lastInitial : firstInitial;
 }
 
-const DropdownUser = ({
-  userDetails
-}:any) => {
+const DropdownUser = ({ userDetails }: any) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
@@ -28,15 +25,13 @@ const DropdownUser = ({
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-           {userDetails.name}
+            {userDetails?.name}
           </span>
-          <span className="block text-xs">{userDetails.type}</span>
+          <span className="block text-xs">{userDetails?.type}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full flex justify-center text-center items-center font-bold bg-slate-50	">
-          <div>
-          {getInitials(userDetails.name)}
-          </div>
+          {/* <div>{getInitials(userDetails?.name)}</div> */}
         </span>
 
         <svg
@@ -87,8 +82,6 @@ const DropdownUser = ({
                 My Profile
               </Link>
             </li>
-           
-           
           </ul>
           <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
             <svg

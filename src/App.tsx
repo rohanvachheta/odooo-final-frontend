@@ -1,191 +1,166 @@
-import { useEffect, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 
-import Loader from './common/Loader';
-import PageTitle from './components/PageTitle';
-import SignIn from './pages/Authentication/SignIn';
-import SignUp from './pages/Authentication/SignUp';
-import Calendar from './pages/Calendar';
-import Chart from './pages/Chart';
-import ECommerce from './pages/Dashboard/ECommerce';
-import FormElements from './pages/Form/FormElements';
-import FormLayout from './pages/Form/FormLayout';
-import Profile from './pages/Profile';
-import Settings from './pages/Settings';
-import Tables from './pages/Tables';
-import Alerts from './pages/UiElements/Alerts';
-import Buttons from './pages/UiElements/Buttons';
-import DefaultLayout from './layout/DefaultLayout';
-import {API_URL} from './constants'
+import Loader from "./common/Loader";
+import PageTitle from "./components/PageTitle";
+import SignIn from "./pages/Authentication/SignIn";
+import SignUp from "./pages/Authentication/SignUp";
+import Calendar from "./pages/Calendar";
+import Chart from "./pages/Chart";
+import ECommerce from "./pages/Dashboard/ECommerce";
+import FormElements from "./pages/Form/FormElements";
+import FormLayout from "./pages/Form/FormLayout";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import Tables from "./pages/Tables";
+import Alerts from "./pages/UiElements/Alerts";
+import Buttons from "./pages/UiElements/Buttons";
+import DefaultLayout from "./layout/DefaultLayout";
+import { useNavigate } from "react-router-dom";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [userDetails, setUserDetails] = useState<{
-    name: string;
-    type: string;
-    email: string;
-  } | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const cookie = false;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
   useEffect(() => {
-    // Fetch user details
-    const fetchUserDetails = async () => {
-      try {
-        const response = await fetch(`${API_URL}/users/current`, {
-          method: 'GET',
-          headers: {
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NjkzNGYxN2VhMDBkYjUxNjBjNzM1NjYiLCJyb2xlIjoiVXNlciIsImlhdCI6MTcyMDkzMDA5MSwiZXhwIjoxNzIxNTM0ODkxfQ.cpKjHkwuf01GPhEKWS4wQ6O_Wuy_VQKY9eSAmCtN7Q0',
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch user details');
-        }
-
-        const data = await response.json();
-        // const data={
-        //   name: 'John Doe',
-        //   type: 'Admin',
-        //   email: 'johndoe@example.com',
-        // }
-        setUserDetails({
-          name: data.name,
-          type: data.type,
-          email: data.email,
-        });
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserDetails();
+    setTimeout(() => setLoading(false), 1000);
+    if (!cookie) {
+      navigate("/auth/signin");
+    }
   }, []);
 
   return loading ? (
     <Loader />
-  ) : error ? (
-    <div>Error: {error}</div>
   ) : (
-    <DefaultLayout userDetails={userDetails!}>
+    <>
+      {!cookie ? (
+        <Routes>
+          <Route
+            path="/auth/signin"
+            element={
+              <>
+                <PageTitle title="Signin | Library Management System" />
+
+                <SignIn />
+              </>
+            }
+          />
+        </Routes>
+      ) : (
+        <DefaultLayout>
+          <Routes>
+            <Route
+              index
+              element={
+                <>
+                  <PageTitle title="eCommerce Dashboard | Library Management System" />
+                  <ECommerce />
+                </>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <>
+                  <PageTitle title="Calendar | Library Management System" />
+                  <Calendar />
+                </>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <>
+                  <PageTitle title="Profile | Library Management System" />
+                  <Profile />
+                </>
+              }
+            />
+            <Route
+              path="/forms/form-elements"
+              element={
+                <>
+                  <PageTitle title="Form Elements | Library Management System" />
+                  <FormElements />
+                </>
+              }
+            />
+            <Route
+              path="/forms/form-layout"
+              element={
+                <>
+                  <PageTitle title="Form Layout | Library Management System" />
+                  <FormLayout />
+                </>
+              }
+            />
+            <Route
+              path="/tables"
+              element={
+                <>
+                  <PageTitle title="Tables | Library Management System" />
+                  <Tables />
+                </>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <>
+                  <PageTitle title="Settings | Library Management System" />
+                  <Settings />
+                </>
+              }
+            />
+            <Route
+              path="/chart"
+              element={
+                <>
+                  <PageTitle title="Basic Chart | Library Management System" />
+                  <Chart />
+                </>
+              }
+            />
+            <Route
+              path="/ui/alerts"
+              element={
+                <>
+                  <PageTitle title="Alerts | Library Management System" />
+                  <Alerts />
+                </>
+              }
+            />
+            <Route
+              path="/ui/buttons"
+              element={
+                <>
+                  <PageTitle title="Buttons | Library Management System" />
+                  <Buttons />
+                </>
+              }
+            />
+          </Routes>
+        </DefaultLayout>
+      )}
+
       <Routes>
-        <Route
-          index
-          element={
-            <>
-              <PageTitle title="eCommerce Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <ECommerce />
-            </>
-          }
-        />
-        <Route
-          path="/calendar"
-          element={
-            <>
-              <PageTitle title="Calendar | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Calendar />
-            </>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <>
-              <PageTitle title="Profile | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Profile userDetails={userDetails!} setUserDetails={setUserDetails}/>
-            </>
-          }
-        />
-        <Route
-          path="/forms/form-elements"
-          element={
-            <>
-              <PageTitle title="Form Elements | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <FormElements />
-            </>
-          }
-        />
-        <Route
-          path="/forms/form-layout"
-          element={
-            <>
-              <PageTitle title="Form Layout | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <FormLayout />
-            </>
-          }
-        />
-        <Route
-          path="/tables"
-          element={
-            <>
-              <PageTitle title="Tables | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Tables />
-            </>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <>
-              <PageTitle title="Settings | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Settings />
-            </>
-          }
-        />
-        <Route
-          path="/chart"
-          element={
-            <>
-              <PageTitle title="Basic Chart | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Chart />
-            </>
-          }
-        />
-        <Route
-          path="/ui/alerts"
-          element={
-            <>
-              <PageTitle title="Alerts | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Alerts />
-            </>
-          }
-        />
-        <Route
-          path="/ui/buttons"
-          element={
-            <>
-              <PageTitle title="Buttons | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <Buttons />
-            </>
-          }
-        />
-        <Route
-          path="/auth/signin"
-          element={
-            <>
-              <PageTitle title="Signin | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <SignIn />
-            </>
-          }
-        />
         <Route
           path="/auth/signup"
           element={
             <>
-              <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="SignUp | Library Management System" />
               <SignUp />
             </>
           }
         />
       </Routes>
-    </DefaultLayout>
+    </>
   );
 }
 

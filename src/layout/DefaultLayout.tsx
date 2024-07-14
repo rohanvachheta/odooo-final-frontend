@@ -1,8 +1,11 @@
-import React, { useState, ReactNode } from 'react';
-import Header from '../components/Header/index';
-import Sidebar from '../components/Sidebar/index';
+import React, { useState, ReactNode } from "react";
+import Header from "../components/Header/index";
+import Sidebar from "../components/Sidebar/index";
 
-const DefaultLayout: React.FC<{ children: ReactNode,userDetails:any }> = ({ children ,userDetails}) => {
+const DefaultLayout: React.FC<{ children: ReactNode; userDetails?: any }> = ({
+  children,
+  userDetails,
+}) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -16,7 +19,11 @@ const DefaultLayout: React.FC<{ children: ReactNode,userDetails:any }> = ({ chil
         {/* <!-- ===== Content Area Start ===== --> */}
         <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
           {/* <!-- ===== Header Start ===== --> */}
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} userDetails={userDetails}/>
+          <Header
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+            userDetails={userDetails}
+          />
           {/* <!-- ===== Header End ===== --> */}
 
           {/* <!-- ===== Main Content Start ===== --> */}
