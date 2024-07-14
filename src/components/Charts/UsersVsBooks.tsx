@@ -1,22 +1,22 @@
-import { ApexOptions } from 'apexcharts';
-import React, { useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
-import {getLast7Days} from '../../utils/dates';
+import { ApexOptions } from "apexcharts";
+import React, { useState } from "react";
+import ReactApexChart from "react-apexcharts";
+import { getLast7Days } from "../../utils/dates";
 
 const options: ApexOptions = {
   legend: {
     show: false,
-    position: 'top',
-    horizontalAlign: 'left',
+    position: "top",
+    horizontalAlign: "left",
   },
-  colors: ['#3C50E0', '#80CAEE'],
+  colors: ["#3C50E0", "#80CAEE"],
   chart: {
-    fontFamily: 'Satoshi, sans-serif',
+    fontFamily: "Satoshi, sans-serif",
     height: 335,
-    type: 'area',
+    type: "area",
     dropShadow: {
       enabled: true,
-      color: '#623CEA14',
+      color: "#623CEA14",
       top: 10,
       blur: 4,
       left: 0,
@@ -47,9 +47,9 @@ const options: ApexOptions = {
   ],
   stroke: {
     width: [2, 2],
-    curve: 'straight',
+    curve: "straight",
   },
-  
+
   grid: {
     xaxis: {
       lines: {
@@ -67,8 +67,8 @@ const options: ApexOptions = {
   },
   markers: {
     size: 4,
-    colors: '#fff',
-    strokeColors: ['#3056D3', '#80CAEE'],
+    colors: "#fff",
+    strokeColors: ["#3056D3", "#80CAEE"],
     strokeWidth: 3,
     strokeOpacity: 0.9,
     strokeDashArray: 0,
@@ -80,7 +80,7 @@ const options: ApexOptions = {
     },
   },
   xaxis: {
-    type: 'category',
+    type: "category",
     categories: getLast7Days(),
     axisBorder: {
       show: false,
@@ -92,7 +92,7 @@ const options: ApexOptions = {
   yaxis: {
     title: {
       style: {
-        fontSize: '0px',
+        fontSize: "0px",
       },
     },
     min: 0,
@@ -107,16 +107,20 @@ interface UsersVsBooksState {
   }[];
 }
 
-const UsersVsBooks: React.FC = ({dayWiseUsers, dayWiseBooksBorrowed}: any) => {
+const UsersVsBooks: React.FC = ({
+  dayWiseUsers,
+  dayWiseBooksBorrowed,
+  data,
+}: any) => {
   const [state, setState] = useState<UsersVsBooksState>({
     series: [
       {
-        name: 'Total Users',
+        name: "Total Users",
         data: dayWiseUsers,
       },
 
       {
-        name: 'Total Books Borrowed',
+        name: "Total Books Borrowed",
         data: dayWiseBooksBorrowed,
       },
     ],
@@ -146,7 +150,9 @@ const UsersVsBooks: React.FC = ({dayWiseUsers, dayWiseBooksBorrowed}: any) => {
               <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-secondary"></span>
             </span>
             <div className="w-full">
-              <p className="font-semibold text-secondary">Total Books Borrowed</p>
+              <p className="font-semibold text-secondary">
+                Total Books Borrowed
+              </p>
             </div>
           </div>
         </div>

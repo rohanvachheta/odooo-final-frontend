@@ -1,13 +1,13 @@
-import { ApexOptions } from 'apexcharts';
-import React, { useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
-import { getInitialLatterLast7Days } from '../../utils/dates';
+import { ApexOptions } from "apexcharts";
+import React, { useState } from "react";
+import ReactApexChart from "react-apexcharts";
+import { getInitialLatterLast7Days } from "../../utils/dates";
 
 const options: ApexOptions = {
-  colors: ['#3C50E0', '#80CAEE'],
+  colors: ["#3C50E0", "#80CAEE"],
   chart: {
-    fontFamily: 'Satoshi, sans-serif',
-    type: 'bar',
+    fontFamily: "Satoshi, sans-serif",
+    type: "bar",
     height: 335,
     stacked: true,
     toolbar: {
@@ -25,7 +25,7 @@ const options: ApexOptions = {
         plotOptions: {
           bar: {
             borderRadius: 0,
-            columnWidth: '25%',
+            columnWidth: "25%",
           },
         },
       },
@@ -35,9 +35,9 @@ const options: ApexOptions = {
     bar: {
       horizontal: false,
       borderRadius: 0,
-      columnWidth: '25%',
-      borderRadiusApplication: 'end',
-      borderRadiusWhenStacked: 'last',
+      columnWidth: "25%",
+      borderRadiusApplication: "end",
+      borderRadiusWhenStacked: "last",
     },
   },
   dataLabels: {
@@ -45,14 +45,14 @@ const options: ApexOptions = {
   },
 
   xaxis: {
-    categories: getInitialLatterLast7Days().map(data => data[0]),
+    categories: getInitialLatterLast7Days().map((data) => data[0]),
   },
   legend: {
-    position: 'top',
-    horizontalAlign: 'left',
-    fontFamily: 'Satoshi',
+    position: "top",
+    horizontalAlign: "left",
+    fontFamily: "Satoshi",
     fontWeight: 500,
-    fontSize: '14px',
+    fontSize: "14px",
 
     markers: {
       radius: 99,
@@ -70,22 +70,22 @@ interface NewBooksState {
   }[];
 }
 
-const NewBooks: React.FC = ({newBooks}: any) => {
+const NewBooks: React.FC = ({ newBooks, data }: any) => {
   const [state, setState] = useState<NewBooksState>({
     series: [
       {
-        name: 'Sales',
+        name: "Sales",
         data: newBooks,
-      }
+      },
     ],
   });
-  
+
   const handleReset = () => {
     setState((prevState) => ({
       ...prevState,
     }));
   };
-  handleReset;  
+  handleReset;
 
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
@@ -95,7 +95,6 @@ const NewBooks: React.FC = ({newBooks}: any) => {
             New Books this week
           </h4>
         </div>
-       
       </div>
 
       <div>
