@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaBookReader } from "react-icons/fa";
+import Cookies from 'js-cookie';
+
 
 const SignIn: React.FC = () => {
   const [errors, setErrors] = useState<any>({});
@@ -43,15 +45,15 @@ const SignIn: React.FC = () => {
   };
 
   const handleSubmit = async (e: any) => {
-    try {
-      e.preventDefault();
+    e.preventDefault();
 
-      if (validateForm()) {
-        const payload = {
-          email: formData.email,
-          password: formData.password,
-        };
-        // Form is valid, you can submit or process the data here
+    if (validateForm()) {
+      const payload = {
+        email: formData.email,
+        password: formData.password,
+      };
+
+      try {
         const loginData = await fetch(
           "https://todobackend-2ax2.onrender.com/users/authenticate",
           {
@@ -63,14 +65,24 @@ const SignIn: React.FC = () => {
           }
         );
 
+        if (!loginData.ok) {
+          throw new Error("Failed to authenticate");
+        }
+
         const response = await loginData.json();
-        //todo: set cookie
-        console.log(response);
-      } else {
-        // Form is not valid, display error messages
+        Cookies.set("token", response.user.token, { expires: 7 }); // Expires in 7 days
+
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000);
+
+        // Handle success here, e.g., set cookies or redirect
+      } catch (error) {
+        // Handle error
+        console.error("Error while authenticating:", error);
+        // Set error state for displaying to the user
+        setErrors({ ...errors, authentication: "Authentication failed" });
       }
-    } catch (error) {
-      throw new Error("Error while authenticating");
     }
   };
 
@@ -78,8 +90,10 @@ const SignIn: React.FC = () => {
 
   return (
     <>
-      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="flex flex-wrap items-center">
+      <div className="rounded-sm flex content-center justify-center" >
+        <div className="flex flex-wrap items-center" style={{
+          height:'100vh'
+        }}>
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="py-17.5 px-26 text-center">
               <div className="flex items-center justify-center mb-5">
@@ -89,8 +103,7 @@ const SignIn: React.FC = () => {
                 </span>
               </div>
               <p className="2xl:px-20">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit
-                suspendisse.
+              "Streamlined Library Management: Empowering Users, Optimizing Operations."
               </p>
               <span className="mt-15 inline-block">
                 <svg
@@ -221,7 +234,7 @@ const SignIn: React.FC = () => {
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <span className="mb-1.5 block font-medium">Start for free</span>
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                Sign In to LMS
+                Sign In to Library Management System
               </h2>
 
               <form onSubmit={handleSubmit}>
@@ -313,6 +326,9 @@ const SignIn: React.FC = () => {
                     disabled={!isFormValid}
                   />
                 </div>
+
+                {errors.authentication && <div className="text-rose-900	">Username or password is incorrect.Please try again.</div>}
+
 
                 <div className="mt-6 text-center">
                   <p>

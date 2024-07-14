@@ -13,6 +13,9 @@ const SignUp: React.FC = () => {
     phone: "",
   });
 
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const handleInputChange = (e: any) => {
     setErrors({});
     const { name, value } = e.target;
@@ -59,7 +62,7 @@ const SignUp: React.FC = () => {
       isValid = false;
     }
 
-    if (formData.password.length <= 6) {
+    if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters.";
       isValid = false;
     }
@@ -74,13 +77,12 @@ const SignUp: React.FC = () => {
     return isValid;
   };
 
-  const handleSubmit = async (e: any) => {
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     try {
-      e.preventDefault();
-
       if (validateForm()) {
-        // Form is valid, you can submit or process the data here
-
         const payload = {
           name: formData.name,
           email: formData.email,
@@ -102,18 +104,29 @@ const SignUp: React.FC = () => {
         );
 
         const response = await registerData.json();
-        console.log(response);
-      } else {
-        // Form is not valid, display error messages
+        if (registerData.ok) {
+          setSuccessMessage("Registration successful! You can now login.");
+          setErrorMessage(null);
+        } else {
+          setErrorMessage(response.message || "Registration failed.");
+          setSuccessMessage(null);
+        }
       }
     } catch (error) {
-      throw new Error("Error while registering");
+      console.error("Error while registering:", error);
+      setErrorMessage("Error while registering.");
+      setSuccessMessage(null);
     }
   };
+
   return (
     <>
-      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="flex flex-wrap items-center">
+      <div className="rounded-sm ">
+
+
+        <div className="flex flex-wrap items-center" style={{
+          height:'100vh'
+        }}>
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="py-17.5 px-26 text-center">
               <div className="flex items-center justify-center mb-5">
@@ -256,10 +269,11 @@ const SignUp: React.FC = () => {
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <span className="mb-1.5 block font-medium">Start for free</span>
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                Sign In to LMS
+                Sign Up to Library Management System
               </h2>
 
               <form onSubmit={handleSubmit}>
+               {!successMessage &&<>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Name
@@ -438,9 +452,9 @@ const SignUp: React.FC = () => {
                       value={formData.address}
                       onChange={handleInputChange}
                     ></textarea>
-                    {errors.confirmPassword && (
+                    {errors.address && (
                       <div className=" text-red-600">
-                        {errors.confirmPassword}
+                        {errors.address}
                       </div>
                     )}
                   </div>
@@ -459,28 +473,36 @@ const SignUp: React.FC = () => {
                       value={formData.phone.trim()}
                       onChange={handleInputChange}
                     />
-                    {errors.confirmPassword && (
+                    {errors.phone && (
                       <div className=" text-red-600">
-                        {errors.confirmPassword}
+                        {errors.phone}
                       </div>
                     )}
                   </div>
-                </div>
+                </div></>}
 
-                <div className="mb-5">
+                {!successMessage &&<div className="mb-5">
                   <input
                     type="submit"
                     value="Create account"
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                   />
-                </div>
+                </div>}
+
+                {errors.authentication && <div className="text-rose-900	">There is some error,Please try again.</div>}
+
                 <div className="mt-6 text-center">
-                  <p>
+                  {successMessage ? <p>
+                    Account has been created, Please{" "}
+                    <Link to="/auth/signin" className="text-primary">
+                      Sign in
+                    </Link>
+                  </p> : <p>
                     Already have an account?{" "}
                     <Link to="/auth/signin" className="text-primary">
                       Sign in
                     </Link>
-                  </p>
+                  </p>}
                 </div>
               </form>
             </div>
