@@ -2,22 +2,43 @@ import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { API_URL } from '../constants';
 
-const Profile = ({ userDetails ,setUserDetails}: any) => {
- 
+const Profile = ({ userDetails, setUserDetails }: any) => {
   const cookie = Cookies.get('token');
   const [name, setName] = useState(userDetails.name);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
 
   useEffect(() => {
-    setName(userDetails.name)
-  }, [userDetails])
-  
+    setName(userDetails.name);
+  }, [userDetails]);
 
   const handleSave = async (e: any) => {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
+
+    // Validation
+    if (!name.trim()) {
+      setError('Name cannot be empty.');
+      return;
+    }
+
+    if (!address.trim()) {
+      setError('Address cannot be empty.');
+      return;
+    }
+
+    if (!phone.trim()) {
+      setError('Phone number cannot be empty.');
+      return;
+    }
+
+    if (!/^\d{10}$/.test(phone.trim())) {
+      setError('Phone number must be 10 digits.');
+      return;
+    }
 
     try {
       const response = await fetch(`${API_URL}/users`, {
@@ -26,22 +47,24 @@ const Profile = ({ userDetails ,setUserDetails}: any) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${cookie}`,
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, phone, address }),
       });
 
       if (response.ok) {
         const data = await response.json();
         setSuccessMessage('Profile updated successfully!');
-        setUserDetails(data)
+        setUserDetails(data);
       } else {
         const data = await response.json();
         if (response.status === 401 && data.message === 'Invalid Token') {
           setError('Invalid Token. Please log in again.');
+        } else if (response.status === 400 && data.message) {
+          setError(data.message);
         } else {
           throw new Error('Failed to update profile');
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error updating profile:', err);
       setError('An error occurred while updating the profile.');
     }
@@ -146,11 +169,42 @@ const Profile = ({ userDetails ,setUserDetails}: any) => {
                 />
               </div>
             </div>
+
+            <div className="mb-5.5">
+              <label className="mb-2.5 block font-medium text-black dark:text-white">
+                Address
+              </label>
+              <div className="relative">
+                <textarea
+                  name="address"
+                  id="address"
+                  cols={20}
+                  className="w-full rounded border border-stroke bg-gray py-3 pl-5.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                ></textarea>
+              </div>
+            </div>
+
+            <div className="mb-5.5">
+              <label className="mb-2.5 block font-medium text-black dark:text-white">
+                Phone
+              </label>
+              <div className="relative">
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Phone"
+                  className="w-full rounded border border-stroke bg-gray py-3 pl-5.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                  value={phone.trim()}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+            </div>
+            {successMessage && <p className="text-green-500">{successMessage}</p>}
+            <div className="flex items-center  justify-end gap-4.5">
             {error && <p className="text-red-500">{error}</p>}
-            {successMessage && (
-              <p className="text-green-500">{successMessage}</p>
-            )}
-            <div className="flex justify-end gap-4.5">
+
               <button
                 className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
                 type="submit"
