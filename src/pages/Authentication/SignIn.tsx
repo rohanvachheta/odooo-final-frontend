@@ -73,7 +73,7 @@ const SignIn: React.FC = () => {
         Cookies.set("token", response.user.token, { expires: 7 }); // Expires in 7 days
 
         setTimeout(() => {
-          window.location.reload()
+          window.location.href='/'
         }, 1000);
 
         // Handle success here, e.g., set cookies or redirect

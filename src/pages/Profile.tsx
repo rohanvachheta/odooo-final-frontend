@@ -7,11 +7,13 @@ const Profile = ({ userDetails, setUserDetails }: any) => {
   const [name, setName] = useState(userDetails.name);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phoneNumber, setPhone] = useState('');
   const [address, setAddress] = useState('');
 
   useEffect(() => {
     setName(userDetails.name);
+    setPhone(userDetails.phoneNumber)
+    setAddress(userDetails.address)
   }, [userDetails]);
 
   const handleSave = async (e: any) => {
@@ -30,12 +32,12 @@ const Profile = ({ userDetails, setUserDetails }: any) => {
       return;
     }
 
-    if (!phone.trim()) {
+    if (!phoneNumber.trim()) {
       setError('Phone number cannot be empty.');
       return;
     }
 
-    if (!/^\d{10}$/.test(phone.trim())) {
+    if (!/^\d{10}$/.test(phoneNumber.trim())) {
       setError('Phone number must be 10 digits.');
       return;
     }
@@ -47,7 +49,7 @@ const Profile = ({ userDetails, setUserDetails }: any) => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${cookie}`,
         },
-        body: JSON.stringify({ name, phone, address }),
+        body: JSON.stringify({ name, phoneNumber, address }),
       });
 
       if (response.ok) {
@@ -194,9 +196,11 @@ const Profile = ({ userDetails, setUserDetails }: any) => {
                 <input
                   type="tel"
                   name="phone"
+                  max={10}
+                  maxLength={10}
                   placeholder="Phone"
                   className="w-full rounded border border-stroke bg-gray py-3 pl-5.5 pr-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                  value={phone.trim()}
+                  value={phoneNumber?.trim()}
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </div>

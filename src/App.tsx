@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
 import Loader from "./common/Loader";
 import PageTitle from "./components/PageTitle";
@@ -14,19 +14,25 @@ import Books from "./pages/Books";
 import CreateBook from "./pages/Create-Books";
 import UserBooks from "./pages/UserBooks";
 import Dashboard from "./pages/Dashboard";
+import ECommerce from "./pages/Dashboard/ECommerce";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
-  const cookie = Cookies.get("token");
+    const navigate = useNavigate();
+    const cookie = Cookies.get('token');
   const [userDetails, setUserDetails] = useState<{
     name: string;
     type: string;
     email: string;
+    phoneNumber:string;
+    address:string;
   } | null>({
-    name: "",
-    email: "",
-    type: "",
+    name:'',
+    email:'',
+    type:'',
+    phoneNumber:'',
+    address:''
   });
 
   useEffect(() => {
@@ -46,15 +52,13 @@ function App() {
         }
 
         const data = await response.json();
-        // const data={
-        //   name: 'John Doe',
-        //   type: 'Admin',
-        //   email: 'johndoe@example.com',
-        // }
+        
         setUserDetails({
-          name: data.name,
-          type: data.type,
-          email: data.email,
+          name: data.name || '',
+          type: data.type || '',
+          email: data.email || '',
+          address:data.address || '',
+          phoneNumber:data.phoneNumber ||''
         });
       } catch (err) {
       } finally {
@@ -62,7 +66,7 @@ function App() {
       }
     };
 
-    fetchUserDetails();
+     if(cookie)fetchUserDetails();
   }, []);
 
   useEffect(() => {
@@ -71,9 +75,9 @@ function App() {
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
-    // if (!cookie) {
-    //   navigate("/auth/signin");
-    // }
+    if (!cookie) {
+      navigate("/");
+    }
   }, []);
 
   return loading ? (
@@ -81,7 +85,17 @@ function App() {
   ) : (
     <>
       {!cookie ? (
+        <>
         <Routes>
+        <Route
+              index
+              element={
+                <>
+                  <PageTitle title="eCommerce Dashboard | Library Management System" />
+                  <ECommerce />
+                </>
+              }
+            />
           <Route
             path="/auth/signin"
             element={
@@ -92,7 +106,17 @@ function App() {
               </>
             }
           />
-        </Routes>
+         <Route
+           path="/auth/signup"
+           element={
+             <>
+               <PageTitle title="SignUp | Library Management System" />
+               <SignUp />
+             </>
+           }
+         />
+       </Routes>
+       </>
       ) : (
         <DefaultLayout userDetails={userDetails}>
           <Routes>
@@ -101,7 +125,7 @@ function App() {
               element={
                 <>
                   <PageTitle title="eCommerce Dashboard | Library Management System" />
-                  <Dashboard />
+                 {userDetails?.type !== "User" ? <Dashboard/> :<ECommerce />}
                 </>
               }
             />
@@ -159,17 +183,7 @@ function App() {
         </DefaultLayout>
       )}
 
-      <Routes>
-        <Route
-          path="/auth/signup"
-          element={
-            <>
-              <PageTitle title="SignUp | Library Management System" />
-              <SignUp />
-            </>
-          }
-        />
-      </Routes>
+     
     </>
   );
 }
