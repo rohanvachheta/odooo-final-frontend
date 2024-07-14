@@ -5,33 +5,28 @@ import Loader from "./common/Loader";
 import PageTitle from "./components/PageTitle";
 import SignIn from "./pages/Authentication/SignIn";
 import SignUp from "./pages/Authentication/SignUp";
-import Calendar from "./pages/Calendar";
-import ECommerce from "./pages/Dashboard/ECommerce";
-import FormElements from "./pages/Form/FormElements";
-import FormLayout from "./pages/Form/FormLayout";
 import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
-import Tables from "./pages/Tables";
-import Alerts from "./pages/UiElements/Alerts";
-import Buttons from "./pages/UiElements/Buttons";
 import DefaultLayout from "./layout/DefaultLayout";
-import { useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { API_URL } from "./constants";
+import Users from "./pages/Users";
+import Books from "./pages/Books";
+import CreateBook from "./pages/Create-Books";
+import UserBooks from "./pages/UserBooks";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const cookie = Cookies.get('token');
+  const cookie = Cookies.get("token");
   const [userDetails, setUserDetails] = useState<{
     name: string;
     type: string;
     email: string;
   } | null>({
-    name:'',
-    email:'',
-    type:''
+    name: "",
+    email: "",
+    type: "",
   });
 
   useEffect(() => {
@@ -39,15 +34,15 @@ function App() {
     const fetchUserDetails = async () => {
       try {
         const response = await fetch(`${API_URL}/users/current`, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Authorization': `Bearer ${cookie}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cookie}`,
+            "Content-Type": "application/json",
           },
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch user details');
+          throw new Error("Failed to fetch user details");
         }
 
         const data = await response.json();
@@ -106,16 +101,16 @@ function App() {
               element={
                 <>
                   <PageTitle title="eCommerce Dashboard | Library Management System" />
-                  <ECommerce />
+                  <Dashboard />
                 </>
               }
             />
             <Route
-              path="/calendar"
+              path="/books"
               element={
                 <>
-                  <PageTitle title="Calendar | Library Management System" />
-                  <Calendar />
+                  <PageTitle title="Books | Library Management System" />
+                  <Books userDetails={userDetails} />
                 </>
               }
             />
@@ -124,61 +119,39 @@ function App() {
               element={
                 <>
                   <PageTitle title="Profile | Library Management System" />
-                  <Profile  userDetails={userDetails} setUserDetails={setUserDetails}/>
+                  <Profile
+                    userDetails={userDetails}
+                    setUserDetails={setUserDetails}
+                  />
                 </>
               }
             />
             <Route
-              path="/forms/form-elements"
+              path="/users"
               element={
                 <>
-                  <PageTitle title="Form Elements | Library Management System" />
-                  <FormElements />
+                  <PageTitle title="Users | Library Management System" />
+                  <Users userDetails={userDetails} />
                 </>
               }
             />
+
             <Route
-              path="/forms/form-layout"
+              path="/user/:id"
               element={
                 <>
-                  <PageTitle title="Form Layout | Library Management System" />
-                  <FormLayout />
+                  <PageTitle title="User books | Library Management System" />
+                  <UserBooks />
                 </>
               }
             />
+
             <Route
-              path="/tables"
+              path="/create-book"
               element={
                 <>
                   <PageTitle title="Tables | Library Management System" />
-                  <Tables />
-                </>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <>
-                  <PageTitle title="Settings | Library Management System" />
-                  <Settings />
-                </>
-              }
-            />
-            <Route
-              path="/ui/alerts"
-              element={
-                <>
-                  <PageTitle title="Alerts | Library Management System" />
-                  <Alerts />
-                </>
-              }
-            />
-            <Route
-              path="/ui/buttons"
-              element={
-                <>
-                  <PageTitle title="Buttons | Library Management System" />
-                  <Buttons />
+                  <CreateBook />
                 </>
               }
             />
