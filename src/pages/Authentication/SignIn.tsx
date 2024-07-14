@@ -64,7 +64,7 @@ const SignIn: React.FC = () => {
         );
 
         const response = await loginData.json();
-
+        //todo: set cookie
         console.log(response);
       } else {
         // Form is not valid, display error messages
