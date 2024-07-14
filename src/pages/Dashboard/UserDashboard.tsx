@@ -25,7 +25,7 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-const ECommerce: React.FC = () => {
+const UserDashboard: React.FC = () => {
   const cookie = Cookies.get('token');
   const [booksList, setBooksList] = useState([])
   const [recBooks, setRecBooks] = useState([]);
@@ -293,4 +293,4 @@ const ECommerce: React.FC = () => {
   </div>
 };
 
-export default ECommerce;
+export default UserDashboard;

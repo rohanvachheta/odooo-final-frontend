@@ -14,7 +14,7 @@ import Books from "./pages/Books";
 import CreateBook from "./pages/Create-Books";
 import UserBooks from "./pages/UserBooks";
 import Dashboard from "./pages/Dashboard";
-import ECommerce from "./pages/Dashboard/ECommerce";
+import ECommerce from "./pages/Dashboard/UserDashboard";
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
