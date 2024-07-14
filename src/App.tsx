@@ -6,7 +6,6 @@ import PageTitle from "./components/PageTitle";
 import SignIn from "./pages/Authentication/SignIn";
 import SignUp from "./pages/Authentication/SignUp";
 import Calendar from "./pages/Calendar";
-import Chart from "./pages/Chart";
 import ECommerce from "./pages/Dashboard/ECommerce";
 import FormElements from "./pages/Form/FormElements";
 import FormLayout from "./pages/Form/FormLayout";
@@ -22,7 +21,7 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const cookie = false;
+  const cookie = true;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -30,9 +29,9 @@ function App() {
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
-    if (!cookie) {
-      navigate("/auth/signin");
-    }
+    // if (!cookie) {
+    //   navigate("/auth/signin");
+    // }
   }, []);
 
   return loading ? (
@@ -115,15 +114,6 @@ function App() {
                 <>
                   <PageTitle title="Settings | Library Management System" />
                   <Settings />
-                </>
-              }
-            />
-            <Route
-              path="/chart"
-              element={
-                <>
-                  <PageTitle title="Basic Chart | Library Management System" />
-                  <Chart />
                 </>
               }
             />
